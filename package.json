@@ -2,7 +2,7 @@
   "name": "behappier-showcase",
   "version": "1.0.0",
   "private": true,
-  "description": "Public showcase of BeHappier: architecture, engineering decisions and tested code excerpts",
+  "description": "Vitrine pública do BeHappier: arquitetura, decisões de engenharia e trechos de código com testes",
   "scripts": {
     "test": "node --test snippets/test/*.test.js"
   },
