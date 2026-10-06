@@ -1,4 +1,4 @@
-# BeHappier · um app acolhedor para uma mulher neurodivergente
+# BeHappier · um app que eu fiz para a minha namorada
 
 ![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?logo=react&logoColor=black)
 ![Expo](https://img.shields.io/badge/Expo-SDK%2057-000020?logo=expo&logoColor=white)
@@ -6,15 +6,19 @@
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore%20%7C%20Storage%20%7C%20Functions-FFCA28?logo=firebase&logoColor=black)
 ![OpenAI](https://img.shields.io/badge/OpenAI-chat%20%7C%20vis%C3%A3o%20%7C%20voz-412991?logo=openai&logoColor=white)
 
-**BeHappier é um app Android que eu projetei e construí sozinho para uma usuária real: uma pessoa próxima de mim que é neurodivergente.** Ele ajuda ela a perceber os padrões de energia e do ciclo menstrual sem nenhuma cobrança de produtividade, tem um chat de apoio com IA e virou o companheiro de estudos dela na faculdade: pastas por matéria para tudo que chega das aulas e uma IA tutora que responde a partir do material dela.
+**BeHappier é um app Android que eu projetei e construí sozinho para a Amalia, minha namorada, que é neurodivergente.** Ele ajuda ela a perceber os padrões de energia e do ciclo menstrual sem nenhuma cobrança de produtividade, tem um chat de apoio com IA e virou o companheiro de estudos dela na faculdade: pastas por matéria para tudo que chega das aulas e uma IA tutora que responde a partir do material dela.
 
-**Código-fonte:** privado (tem o modelo de dados de saúde de uma pessoa real e foi feito para ela). Este repositório é uma vitrine pública: arquitetura, decisões de engenharia e alguns trechos de código representativos com testes. Mostro o código privado com prazer numa entrevista.
+## Por que eu fiz
+
+A Amalia queria um lugar só dela pra entender a própria energia e o ciclo, sem app de produtividade cobrando metas, e depois pediu ajuda com a faculdade: o material das aulas chegava espalhado em grupos do WhatsApp e se perdia. Em vez de procurar um app pronto que resolvesse mais ou menos, eu construí um do jeito que ela precisa. Cada tela nasceu de uma conversa com ela, e é ela quem testa cada versão. Ela quis que esta vitrine contasse essa história.
+
+**Código-fonte:** privado (guarda dados pessoais e de saúde dela). Este repositório é uma vitrine pública: arquitetura, decisões de engenharia e alguns trechos de código representativos com testes. Mostro o código privado com prazer numa entrevista.
 
 ## Resumo
 
 | | |
 |---|---|
-| **Papel** | Tudo sozinho: produto, UX, app, backend, prompts de IA, publicação e suporte (a usuária é uma pessoa real que reporta bugs pelo WhatsApp) |
+| **Papel** | Tudo sozinho: produto, UX, app, backend, prompts de IA, publicação e suporte (a Amalia reporta os bugs pelo WhatsApp) |
 | **App** | React Native 0.86 + Expo SDK 57, TypeScript, Zustand, React Navigation · ~8.700 linhas em 60 arquivos |
 | **Backend** | Firebase: Auth, Firestore, Storage e 4 Cloud Functions (Node 22) · ~570 linhas |
 | **IA** | OpenAI: chat de apoio e sugestão pós check-in (`gpt-4o-mini`), tutora de estudos que lê PDF, Word, slides e fotos (`gpt-6-luna`), transcrição de voz |
@@ -64,7 +68,7 @@ Mais diagramas (fluxo das pastas e como o contexto da IA é montado) em [docs/ar
 
 Todos os trechos são simplificados do app e cobertos por testes em [snippets/test](snippets/test) (`npm test`, 17 casos, sem dependências).
 
-## Projetando para uma usuária neurodivergente
+## Pensado para ela
 
 - **Sem linguagem de produtividade.** Os textos validam o descanso ("tudo bem desacelerar") e a fase lútea diz que baixar a régua é cuidado, não fraqueza.
 - **Pouco esforço pra registrar.** Um check-in são poucos toques; "não sei dizer" é resposta válida e nunca vira insight.
@@ -80,7 +84,7 @@ Todos os trechos são simplificados do app e cobertos por testes em [snippets/te
 
 ## O que eu aprendi
 
-- **Construir para uma pessoa real é a melhor escola de produto.** Cada funcionalidade veio de uma dificuldade de verdade, e os bugs chegam como print no WhatsApp em vez de ticket.
+- **Construir para alguém que você conhece é a melhor escola de produto.** Cada funcionalidade veio de uma dificuldade de verdade, e os bugs chegam como print no WhatsApp em vez de ticket.
 - **React Native tem arestas no manuseio de arquivos.** Blob tem que ser criado via XHR, Blob fechado dá erro em qualquer acesso (um bug que eu publiquei e corrigi no mesmo dia) e abrir um arquivo em outro app exige URI `content://` no Android.
 - **Modelo barato com bom contexto vence modelo caro.** Escolher qual material entra no prompt importou mais do que o modelo.
 
