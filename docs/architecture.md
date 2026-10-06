@@ -1,47 +1,47 @@
-# Architecture
+# Arquitetura
 
-## Data layout
+## Organização dos dados
 
-Everything belongs to one Firebase user and lives under their uid, so a single security rule (`request.auth.uid == userId`) protects all of it.
+Tudo pertence a um usuário do Firebase e fica dentro do uid dele, então uma única regra de segurança (`request.auth.uid == userId`) protege tudo.
 
 ```
 Firestore
-  users/{uid}                              profile
-  users/{uid}/meta/cycle                   current cycle + history of period starts
+  users/{uid}                              perfil
+  users/{uid}/meta/cycle                   ciclo atual + histórico de inícios da menstruação
   users/{uid}/logs/{logId}                 check-ins
-  users/{uid}/symptoms/{date}              flow and symptoms per day
-  users/{uid}/folders/{folderId}           subject folder (name, color, icon, item count)
-  users/{uid}/folders/{folderId}/items/{id}   photo, file or note
-  users/{uid}/folders/{folderId}/texts/{id}   text extracted by the AI function (cache)
+  users/{uid}/symptoms/{data}              fluxo e sintomas por dia
+  users/{uid}/folders/{pastaId}            pasta de matéria (nome, cor, ícone, contagem de itens)
+  users/{uid}/folders/{pastaId}/items/{id}    foto, arquivo ou anotação
+  users/{uid}/folders/{pastaId}/texts/{id}    texto extraído pela função de IA (cache)
 
 Storage
-  users/{uid}/folders/{folderId}/{itemId}.{ext}   the files themselves (max 50 MB each)
+  users/{uid}/folders/{pastaId}/{itemId}.{ext}   os arquivos em si (máximo 50 MB cada)
 
-Phone (AsyncStorage + app documents folder)
-  profile, logs, cycle, symptoms          source of truth offline, mirrored to Firestore
-  support chat and study conversations    phone-only, with their photos and PDFs
-  cache of opened folder files            so the second open is instant
+Celular (AsyncStorage + pasta de documentos do app)
+  perfil, check-ins, ciclo, sintomas       fonte da verdade offline, espelhada no Firestore
+  chat de apoio e conversas de estudo      só no celular, com as fotos e PDFs delas
+  cache dos arquivos de pasta já abertos   pra segunda abertura ser instantânea
 ```
 
-## Check-in to suggestion
+## Do check-in à sugestão
 
 ```mermaid
 sequenceDiagram
-  participant U as User
+  participant U as Usuária
   participant A as App
   participant L as AsyncStorage
   participant F as Firestore
   participant C as aiSuggestion
-  U->>A: energy, factors, mood, note
-  A->>L: save immediately (works offline)
-  A-->>F: mirror the log (if signed in)
-  A->>C: check-in + short summary of recent days and cycle phase
-  C->>C: verify signed-in user
-  C-->>A: one gentle, concrete suggestion
-  A->>U: suggestion + "talk about it" opens the chat seeded with it
+  U->>A: energia, fatores, humor, nota
+  A->>L: salva na hora (funciona offline)
+  A-->>F: espelha o check-in (se estiver logada)
+  A->>C: check-in + resumo curto dos últimos dias e da fase do ciclo
+  C->>C: confere se a usuária está logada
+  C-->>A: uma sugestão gentil e concreta
+  A->>U: sugestão + "conversar sobre isso" abre o chat já com ela
 ```
 
-## Subject folders and sharing from WhatsApp
+## Pastas de matéria e compartilhar do WhatsApp
 
 ```mermaid
 sequenceDiagram
@@ -49,15 +49,15 @@ sequenceDiagram
   participant A as App
   participant S as Storage
   participant F as Firestore
-  W->>A: Share → app (Android SEND intent, file copied to app cache)
-  A->>A: wait for login, open "Save to a folder"
-  A->>S: uploadBytesResumable (progress bar)
-  A->>F: batch: create item + increment folder count
-  Note over A,S: if the item write fails, the uploaded file is deleted
-  F-->>A: onSnapshot updates the folder screen live
+  W->>A: Compartilhar → app (intent SEND do Android, arquivo copiado pro cache do app)
+  A->>A: espera o login e abre "Salvar numa pasta"
+  A->>S: uploadBytesResumable (barra de progresso)
+  A->>F: batch: cria o item + incrementa a contagem da pasta
+  Note over A,S: se gravar o item falhar, o arquivo enviado é apagado
+  F-->>A: onSnapshot atualiza a tela da pasta ao vivo
 ```
 
-## "Ask the AI" about picked items
+## "Perguntar pra IA" sobre itens escolhidos
 
 ```mermaid
 sequenceDiagram
@@ -66,30 +66,30 @@ sequenceDiagram
   participant F as Firestore
   participant S as Storage
   participant O as OpenAI
-  A->>C: conversation + { folderId, itemIds }
-  C->>F: read folder and picked items (under the caller's uid)
-  loop each item, newest first
-    alt note
-      C->>C: use its text
-    else PDF / Word / PPTX / text
-      C->>F: texts/{id} cached?
-      opt not cached
-        C->>S: download file
-        C->>C: extract (pdf-parse, mammoth, slide reader)
-        C->>F: cache text (empty for scanned PDFs, so it isn't retried)
+  A->>C: conversa + { pastaId, itemIds }
+  C->>F: lê a pasta e os itens escolhidos (dentro do uid de quem chamou)
+  loop cada item, do mais recente pro mais antigo
+    alt anotação
+      C->>C: usa o texto dela
+    else PDF / Word / PPTX / texto
+      C->>F: texts/{id} já existe?
+      opt não existe
+        C->>S: baixa o arquivo
+        C->>C: extrai (pdf-parse, mammoth, leitor de slides)
+        C->>F: guarda o texto (vazio pra PDF escaneado, pra não tentar de novo)
       end
-    else photo
-      C->>S: download, attach as image (max 10)
+    else foto
+      C->>S: baixa e anexa como imagem (máximo 10)
     end
   end
-  C->>O: system prompt + material message + conversation
+  C->>O: prompt do sistema + mensagem com o material + conversa
   O-->>C: JSON { reply, document? }
-  C-->>A: reply, optional PDF content, note about anything left out
-  A->>A: render PDF on the phone if requested
+  C-->>A: resposta, conteúdo de PDF opcional, aviso do que ficou de fora
+  A->>A: gera o PDF no celular se ela pediu
 ```
 
-The material is rebuilt on every turn from the cache, so the phone never re-uploads files and the AI never "forgets" them as the conversation grows.
+O material é montado de novo a cada pergunta a partir do cache, então o celular nunca reenvia arquivos e a IA não "esquece" o material quando a conversa cresce.
 
-## Why a callable for every AI feature
+## Por que toda funcionalidade de IA é uma callable
 
-The OpenAI key is a Firebase secret, available only to the functions. The app calls them with `httpsCallable`, which sends the user's ID token; each function rejects unauthenticated calls before doing anything. There is no sign-up screen, so the only accounts are the ones created in the console.
+A chave da OpenAI é um secret do Firebase, disponível só para as funções. O app chama as funções com `httpsCallable`, que envia o token de identidade da usuária, e cada função recusa chamadas sem login antes de fazer qualquer coisa. Não existe tela de cadastro, então as únicas contas são as criadas no console.
