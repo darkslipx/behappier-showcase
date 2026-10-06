@@ -1,17 +1,17 @@
-// "Ask the AI about these items": the user picks files, photos and notes in
-// a subject folder, and every question in that conversation is answered
-// from them. The Cloud Function reads the items straight from Firestore and
-// Storage, so the phone never re-uploads anything, but it still has to
-// decide what fits in one request:
-//   - text has a character budget (newest items first);
-//   - photos go as images, with a cap on how many;
-//   - anything that can't be used is reported back, so the app can tell
-//     her "I couldn't read X" instead of answering as if it had.
-// `textOf(item)` returns the item's text ('' when unreadable: scanned PDFs,
-// audio…). In production it reads a per-item cache and only extracts
-// (pdf-parse, mammoth, the .pptx reader) the first time.
+// "Perguntar pra IA sobre estes itens": a usuária escolhe arquivos, fotos e
+// anotações numa pasta de matéria, e toda pergunta daquela conversa é
+// respondida a partir deles. A Cloud Function lê os itens direto do
+// Firestore e do Storage, então o celular não reenvia nada, mas ainda
+// precisa decidir o que cabe numa requisição:
+//   - o texto tem um limite de caracteres (itens mais recentes primeiro);
+//   - as fotos vão como imagem, com um limite de quantidade;
+//   - o que não puder ser usado volta como aviso, pro app dizer "não
+//     consegui ler X" em vez de responder como se tivesse lido.
+// `textOf(item)` devolve o texto do item ('' quando não dá pra ler: PDF
+// escaneado, áudio…). Em produção ele lê um cache por item e só extrai
+// (pdf-parse, mammoth, o leitor de .pptx) na primeira vez.
 
-const MAX_MATERIAL_CHARS = 400_000; // ~100k tokens
+const MAX_MATERIAL_CHARS = 400_000; // ~100 mil tokens
 const MAX_PHOTOS = 10;
 
 async function buildMaterial(items, textOf, { maxChars = MAX_MATERIAL_CHARS, maxPhotos = MAX_PHOTOS } = {}) {

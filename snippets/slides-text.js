@@ -1,11 +1,10 @@
-// Class slides usually arrive as .pptx, and the model can't read Office
-// files directly. A .pptx is a zip of XML files, one per slide
-// (ppt/slides/slide1.xml, slide2.xml, …), and the visible text sits in
-// <a:t> runs. In the Cloud Function the zip is opened with JSZip; this is
-// the dependency-free part: put the slides in the right order and pull the
-// text out of each one.
+// Os slides das aulas costumam chegar em .pptx, e o modelo não lê arquivo
+// do Office direto. Um .pptx é um zip de arquivos XML, um por slide
+// (ppt/slides/slide1.xml, slide2.xml, …), e o texto visível fica nas tags
+// <a:t>. Na Cloud Function o zip é aberto com o JSZip; esta é a parte sem
+// dependências: colocar os slides na ordem certa e tirar o texto de cada um.
 //
-// Ordering matters: a plain string sort puts slide10 before slide2.
+// A ordem importa: ordenar como texto coloca o slide10 antes do slide2.
 
 function slideNumber(path) {
   const match = /slide(\d+)\.xml$/.exec(path);
@@ -18,10 +17,10 @@ function decodeXml(text) {
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&apos;/g, "'")
-    .replace(/&amp;/g, '&'); // last, so "&amp;lt;" stays "&lt;"
+    .replace(/&amp;/g, '&'); // por último, pra "&amp;lt;" virar "&lt;"
 }
 
-/** `slides`: { [zipPath]: xmlString }. Returns one line per slide with text. */
+/** `slides`: { [caminhoNoZip]: xml }. Devolve uma linha por slide que tem texto. */
 function slidesText(slides) {
   return Object.keys(slides)
     .filter((p) => /^ppt\/slides\/slide\d+\.xml$/.test(p))

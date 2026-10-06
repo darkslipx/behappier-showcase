@@ -1,16 +1,16 @@
-// The study chat keeps the whole conversation on the phone, but resending
-// every PDF and photo on every turn would be slow and expensive on mobile
-// data. So only the newest message ships its files (as base64); the server
-// extracts their text and returns it, the app stores it on the message,
-// and later turns send that text instead of the file. Older photos become
-// a short "[she sent N photos here]" marker. History is trimmed to the
-// most recent messages.
+// O chat de estudos guarda a conversa inteira no celular, mas reenviar todo
+// PDF e foto a cada mensagem seria lento e caro no 4G. Então só a mensagem
+// mais nova leva os arquivos (em base64); o servidor extrai o texto e
+// devolve, o app guarda esse texto na mensagem, e as próximas perguntas
+// mandam o texto em vez do arquivo. Fotos antigas viram só uma marcação
+// "[ela tinha mandado N fotos aqui]". O histórico é cortado nas mensagens
+// mais recentes.
 
 const MAX_HISTORY = 30;
 
 /**
- * `readBase64(uri)` reads a local file. Returns the payload for the
- * aiStudyChat callable.
+ * `readBase64(uri)` lê um arquivo local. Devolve o payload da callable
+ * aiStudyChat.
  */
 async function buildStudyPayload(history, readBase64, maxHistory = MAX_HISTORY) {
   const recent = history.slice(-maxHistory);

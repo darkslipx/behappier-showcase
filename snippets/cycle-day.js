@@ -1,9 +1,9 @@
-// Cycle math for the "Ciclo" tab. The naive version (`daysSinceStart % length`)
-// silently starts a new cycle when the period is late, which is exactly the
-// moment the user most needs the app to say "you're 3 days late". Here the
-// count keeps going (day 31, 32…) while she's late, and future days on the
-// calendar assume the period starts tomorrow.
-// Simplified from the app (which uses date-fns); dates are ISO "YYYY-MM-DD".
+// Contas do ciclo da aba "Ciclo". A versão ingênua (`diasDesdeOInicio % duração`)
+// começa um ciclo novo em silêncio quando a menstruação atrasa, que é
+// justamente quando a usuária mais precisa que o app diga "você está 3 dias
+// atrasada". Aqui a contagem continua (dia 31, 32…) durante o atraso, e os
+// dias futuros no calendário supõem que a menstruação vem amanhã.
+// Simplificado do app (que usa date-fns); datas no formato ISO "AAAA-MM-DD".
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -16,20 +16,20 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
-/** Days the period is late today (0 when it isn't due yet). */
+/** Dias de atraso hoje (0 quando ainda não está na data). */
 function lateDays(cycle, today) {
   const sinceStart = dayNumber(today) - dayNumber(cycle.lastPeriodStart);
   return Math.max(0, sinceStart + 1 - cycle.cycleLength);
 }
 
-/** Day of the cycle (1-based) on `date`, as seen from `today`. */
+/** Dia do ciclo (começando em 1) em `date`, visto a partir de `today`. */
 function dayInCycle(cycle, date, today) {
   const offset = dayNumber(date) - dayNumber(cycle.lastPeriodStart);
   const todayOffset = dayNumber(today) - dayNumber(cycle.lastPeriodStart);
   const L = cycle.cycleLength;
   if (offset < 0 || todayOffset < L) return mod(offset, L) + 1;
-  if (offset <= todayOffset) return offset + 1; // late: keep counting
-  return mod(offset - todayOffset - 1, L) + 1; // future: assume it starts tomorrow
+  if (offset <= todayOffset) return offset + 1; // atrasada: continua contando
+  return mod(offset - todayOffset - 1, L) + 1; // futuro: supõe que vem amanhã
 }
 
 function cyclePhase(cycle, date, today = date) {
@@ -45,9 +45,10 @@ const MAX_CYCLE = 60;
 const AVERAGE_OVER = 6;
 
 /**
- * Average of the recent real cycles between logged period starts (like
- * Flo/Clue), or null until there's one complete cycle. Gaps outside 15-60
- * days are a forgotten or mistyped log, not a cycle, so they're skipped.
+ * Média dos ciclos reais mais recentes entre os inícios registrados (como o
+ * Flo e o Clue), ou null até existir um ciclo completo. Intervalos fora de
+ * 15 a 60 dias são um registro esquecido ou digitado errado, não um ciclo,
+ * então ficam de fora.
  */
 function averageCycleLength(starts) {
   const sorted = [...new Set(starts)].sort();
