@@ -6,7 +6,7 @@
 ![Firebase](https://img.shields.io/badge/Firebase-Auth%20%7C%20Firestore%20%7C%20Storage%20%7C%20Functions-FFCA28?logo=firebase&logoColor=black)
 ![OpenAI](https://img.shields.io/badge/OpenAI-chat%20%7C%20vis%C3%A3o%20%7C%20voz-412991?logo=openai&logoColor=white)
 
-**BeHappier é um app Android que eu projetei e construí sozinho para a Amalia, minha namorada, que é neurodivergente.** Ele ajuda ela a perceber os padrões de energia e do ciclo menstrual sem nenhuma cobrança de produtividade, tem um chat de apoio com IA e virou o companheiro de estudos dela na faculdade: pastas por matéria para tudo que chega das aulas e uma IA tutora que responde a partir do material dela.
+**BeHappier é um app Android que eu projetei e construí sozinho para a Amalia, minha namorada, que está em análise para neurodivergência.** Ele ajuda ela a perceber os padrões de energia e do ciclo menstrual sem nenhuma cobrança de produtividade, tem um chat de apoio com IA e virou o companheiro de estudos dela na faculdade: pastas por matéria para tudo que chega das aulas e uma IA tutora que responde a partir do material dela.
 
 ## Por que eu fiz
 
