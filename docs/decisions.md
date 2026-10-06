@@ -1,6 +1,6 @@
 # Decisões de engenharia
 
-Registros curtos de escolhas que eu fiz e por quê. Cada uma veio de uma necessidade real de construir para uma pessoa específica.
+Registros curtos de escolhas que eu fiz e por quê. Cada uma veio de uma necessidade real de construir para uma pessoa específica: a Amalia, minha namorada.
 
 ## 1. Primeiro no celular, nuvem opcional
 Os check-ins são gravados primeiro no celular e espelhados no Firestore depois. O app nunca mostra carregando pra salvar um check-in, funciona no modo avião e com internet ruim, e o login num celular novo junta os dois lados pelo id. O custo é uma sincronização simples em que a última gravação vence, o que basta para uma usuária em um ou dois aparelhos.
